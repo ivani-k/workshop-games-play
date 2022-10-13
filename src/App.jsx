@@ -1,5 +1,5 @@
-import {Routes, Route } from 'react-router-dom';
-import { useEffect, useState, useNavigate } from "react";
+import {Routes, Route, useNavigate } from 'react-router-dom';
+import { useEffect, useState, lazy, Suspense } from "react";
 import uniqid from 'uniqid';
 import * as gameServise from './services/gameService';
 
@@ -7,10 +7,12 @@ import './App.css';
 import Header from './components/Header/Header';
 import Home from './components/Home/Home';
 import Login from './components/Login/Login';
-import Register from './components/Register/Register';
 import CreateGame from './components/CreatePage/CreateGame';
 import Catalog from './components/Catalog/Catalog';
 import GameDetails from './components/GameDetails/GameDetails';
+
+
+const Register = lazy(()=> import('./components/Register/Register'));
 
 function App() {
   const [games, setGames] = useState([]);
@@ -57,7 +59,11 @@ function App() {
       <Routes>
          <Route path="/" element={ <Home games={games}/>}/>
          <Route path="/login" element={ <Login/>}/>
-         <Route path="/register" element={ <Register/>}/>
+         <Route path="/register" element={ 
+         <Suspense fallback={<span>Loading...</span>}>
+            <Register/>
+         </Suspense>
+         }/>
          <Route path="/create" element={ <CreateGame addGameHandler={addGameHandler}/>}/>
          <Route path="/catalog" element={ <Catalog games={games}/>}/>
          <Route path="/catalog/:gameId" element={<GameDetails games={games} addComment={addComment}/>} />
