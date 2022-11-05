@@ -1,6 +1,6 @@
 
 import LatestGame from "./LatestGame/LatestGame";
-const Home = (games) => {
+const Home = ({games}) => {
   
 
  return (

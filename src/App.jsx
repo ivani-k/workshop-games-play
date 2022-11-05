@@ -1,12 +1,15 @@
 import {Routes, Route, useNavigate } from 'react-router-dom';
 import { useEffect, useState, lazy, Suspense } from "react";
 import uniqid from 'uniqid';
+
 import * as gameServise from './services/gameService';
+import { AuthContext } from './contexts/AuthContext';
 
 import './App.css';
 import Header from './components/Header/Header';
 import Home from './components/Home/Home';
 import Login from './components/Login/Login';
+import Logout from './components/Logout/Logout';
 import CreateGame from './components/CreatePage/CreateGame';
 import Catalog from './components/Catalog/Catalog';
 import GameDetails from './components/GameDetails/GameDetails';
@@ -16,11 +19,21 @@ const Register = lazy(()=> import('./components/Register/Register'));
 
 function App() {
   const [games, setGames] = useState([]);
+  const [auth, setAuth] = useState({});
   const navigate = useNavigate();
+
+  const userLogin = (authData) => {
+    setAuth(authData)
+  }
+
+  const userLogout = () => {
+    setAuth({});
+  }
+
 
   const addComment = (gameId, comment) => {
     setGames(state =>{
-      const game = state.find(x=> x._id ==gameId);
+      const game = state.find(x=> x._id === gameId);
 
       const comments = game.comment || [];
       comments.push(comment)
@@ -51,10 +64,12 @@ function App() {
       setGames(result);
   });
   }, []);
+
   return (
+    <AuthContext.Provider value={{user: auth, userLogin, userLogout}}>
     <div id="box">
     <Header/>
-    {/* Main Content */}
+
     <main id="main-content">
       <Routes>
          <Route path="/" element={ <Home games={games}/>}/>
@@ -64,6 +79,7 @@ function App() {
             <Register/>
          </Suspense>
          }/>
+         <Route path="/logout" element={<Logout/>} />
          <Route path="/create" element={ <CreateGame addGameHandler={addGameHandler}/>}/>
          <Route path="/catalog" element={ <Catalog games={games}/>}/>
          <Route path="/catalog/:gameId" element={<GameDetails games={games} addComment={addComment}/>} />
@@ -103,6 +119,7 @@ function App() {
 
    
   </div>
+  </AuthContext.Provider>
   
   );
 }
