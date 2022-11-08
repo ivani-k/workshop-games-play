@@ -1,9 +1,10 @@
 import {Routes, Route, useNavigate } from 'react-router-dom';
 import { useEffect, useState, lazy, Suspense } from "react";
-import uniqid from 'uniqid';
+
 
 import * as gameServise from './services/gameService';
 import { AuthContext } from './contexts/AuthContext';
+import { GameContext } from './contexts/GameContext';
 
 import './App.css';
 import Header from './components/Header/Header';
@@ -11,15 +12,17 @@ import Home from './components/Home/Home';
 import Login from './components/Login/Login';
 import Logout from './components/Logout/Logout';
 import CreateGame from './components/CreatePage/CreateGame';
+import EditGame from './components/EditGame/EditGame';
 import Catalog from './components/Catalog/Catalog';
 import GameDetails from './components/GameDetails/GameDetails';
+import { useLocalStorage } from './hooks/useLocalStorage';
 
 
 const Register = lazy(()=> import('./components/Register/Register'));
 
 function App() {
   const [games, setGames] = useState([]);
-  const [auth, setAuth] = useState({});
+  const [auth, setAuth] = useLocalStorage('auth', {});
   const navigate = useNavigate();
 
   const userLogin = (authData) => {
@@ -46,17 +49,18 @@ function App() {
     })
   };
 
-  const addGameHandler = (gameData) => {
+  const gameAdd = (gameData) => {
     setGames(state => [
       ...state,
-     {
-       ...gameData,
-       _id: uniqid(),
-     },
+      gameData,
     ]);
 
     navigate('/catalog');
   };
+
+  const gameEdit = (gameId, gameData) => {
+    setGames(state => state.map(x=> x._id === gameId ? gameData: x))
+  }
      
   useEffect(()=> {
   gameServise.getAll()
@@ -70,6 +74,7 @@ function App() {
     <div id="box">
     <Header/>
 
+    <GameContext.Provider value = {{games, gameAdd, gameEdit}}>
     <main id="main-content">
       <Routes>
          <Route path="/" element={ <Home games={games}/>}/>
@@ -80,43 +85,14 @@ function App() {
          </Suspense>
          }/>
          <Route path="/logout" element={<Logout/>} />
-         <Route path="/create" element={ <CreateGame addGameHandler={addGameHandler}/>}/>
+         <Route path="/create" element={ <CreateGame />}/>
+         <Route path="/games/:gameId/edit" element={<EditGame/>}/>
          <Route path="/catalog" element={ <Catalog games={games}/>}/>
          <Route path="/catalog/:gameId" element={<GameDetails games={games} addComment={addComment}/>} />
       </Routes>
     
     </main>
- 
-    
-    
-    {/* Edit Page ( Only for the creator )*/}
-    {/* <section id="edit-page" className="auth">
-      <form id="edit">
-        <div className="container">
-          <h1>Edit Game</h1>
-          <label htmlFor="leg-title">Legendary title:</label>
-          <input type="text" id="title" name="title" defaultValue="" />
-          <label htmlFor="category">Category:</label>
-          <input type="text" id="category" name="category" defaultValue="" />
-          <label htmlFor="levels">MaxLevel:</label>
-          <input
-            type="number"
-            id="maxLevel"
-            name="maxLevel"
-            min={1}
-            defaultValue=""
-          />
-          <label htmlFor="game-img">Image:</label>
-          <input type="text" id="imageUrl" name="imageUrl" defaultValue="" />
-          <label htmlFor="summary">Summary:</label>
-          <textarea name="summary" id="summary" defaultValue={""} />
-          <input className="btn submit" type="submit" defaultValue="Edit Game" />
-        </div>
-      </form>
-    </section> */}
-
-  
-
+    </GameContext.Provider>
    
   </div>
   </AuthContext.Provider>
