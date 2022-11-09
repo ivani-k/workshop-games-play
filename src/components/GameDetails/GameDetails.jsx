@@ -1,12 +1,11 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
+import { GameContext } from "../../contexts/GameContext";
 
 import * as gameService from '../../services/gameService';
 
-const GameDetails = ({
-    addComment,
-}) => {
+const GameDetails = () => {
+    const {addComment} = useContext(GameContext);
     const {gameId} = useParams();
     const [currentGame, setCurrentGame] = useState({});
 
