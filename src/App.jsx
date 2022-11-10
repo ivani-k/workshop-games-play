@@ -3,6 +3,8 @@ import {  lazy, Suspense } from "react";
 
 import { AuthProvider } from './contexts/AuthContext';
 import { GameProvider } from './contexts/GameContext';
+import PrivateRoute from './components/common/PrivateRoute';
+import PrivateGuard from './components/common/PrivateGuard';
 
 import './App.css';
 import Header from './components/Header/Header';
@@ -33,9 +35,11 @@ function App() {
             <Register/>
          </Suspense>
          }/>
-         <Route path="/logout" element={<Logout/>} />
-         <Route path="/create" element={ <CreateGame />}/>
-         <Route path="/games/:gameId/edit" element={<EditGame/>}/>
+         <Route element={<PrivateGuard />}> 
+             <Route path="/games/:gameId/edit" element={<EditGame/>}/>
+             <Route path="/logout" element={<Logout/>} />
+         </Route>
+         <Route path="/create" element={<PrivateRoute> <CreateGame /></PrivateRoute>}/>
          <Route path="/catalog" element={ <Catalog />}/>
          <Route path="/catalog/:gameId" element={<GameDetails />} />
       </Routes>
