@@ -1,15 +1,18 @@
-import { Navigate, Outlet } from 'react-router-dom';
+// import { Navigate } from "react-router-dom";
+// import { useAuthContext } from "../../contexts/AuthContext";
 
-import { useAuthContext } from '../../contexts/AuthContext';
+// const PrivateGuard = ({ children }) => {
+//     const { isAuthenticated } = useAuthContext();
 
-const PrivateGuard = ({children}) => {
-    const { isAuthenticated } = useAuthContext();
-    
-    if (!isAuthenticated) {
-        return <Navigate to="/login" replace />
-    }
+//     if (!isAuthenticated) {
+//         return <Navigate to="/login" replace />
+//     }
 
-    return children ? children: <Outlet />;  
-};
+//     return(
+//      <>
+//     {children}
+//     </>
+//     );
+// };
 
-export default PrivateGuard;
+// export default PrivateGuard;

@@ -4,14 +4,15 @@ import {  lazy, Suspense } from "react";
 import { AuthProvider } from './contexts/AuthContext';
 import { GameProvider } from './contexts/GameContext';
 import PrivateRoute from './components/common/PrivateRoute';
-import PrivateGuard from './components/common/PrivateGuard';
+//import PrivateGuard from './components/common/PrivateGuard';
+import GameOwner from './components/common/GameOwner';
 
 import './App.css';
 import Header from './components/Header/Header';
 import Home from './components/Home/Home';
 import Login from './components/Login/Login';
 import Logout from './components/Logout/Logout';
-import CreateGame from './components/CreatePage/CreateGame';
+import CreateGame from './components/CreateGame/CreateGame';
 import EditGame from './components/EditGame/EditGame';
 import Catalog from './components/Catalog/Catalog';
 import GameDetails from './components/GameDetails/GameDetails';
@@ -35,9 +36,12 @@ function App() {
             <Register/>
          </Suspense>
          }/>
-         <Route element={<PrivateGuard />}> 
-             <Route path="/games/:gameId/edit" element={<EditGame/>}/>
+         <Route element={<PrivateRoute />}> 
+            
              <Route path="/logout" element={<Logout/>} />
+         </Route>
+         <Route element={<GameOwner />}>
+         <Route path="/games/:gameId/edit" element={<EditGame/>}/>
          </Route>
          <Route path="/create" element={<PrivateRoute> <CreateGame /></PrivateRoute>}/>
          <Route path="/catalog" element={ <Catalog />}/>
